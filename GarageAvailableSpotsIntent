@@ -1,0 +1,30 @@
+//List of all UCF garages
+var garageList =["A","B","C","D","H","I","LIBRA"];
+
+module.exports = async function(conv,lib){
+  const {scraper,SimpleResponse} = lib;
+  
+  //Do the scraper and return the results
+  let response = await(async ()=>{
+    let resp = await scraper();
+    return resp;
+  })();
+  var dialogResponseArray = [];
+  for(i = 0; i < garageList.length; i++){
+
+    //Variables set the garage name, spots availaible in that garage, and the capacity of that garage
+    let garageName = response.index[i].name;
+    let spotsAvailable = response.letter[garageName].available;
+    let garageCapacity = response.letter[garageName].capacity ;
+
+    //Formatting for the response to DialogFlow
+    dialogResponseArray[i] = " Garage " + garageName + " has " + spotsAvailable + " spots left out of " + garageCapacity;
+
+  }
+
+  let dialogResponse = "Here are all of the garages:" + dialogResponseArray;
+
+  conv.add(new SimpleResponse(dialogResponse));
+
+  return conv;
+}
